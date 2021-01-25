@@ -13,36 +13,35 @@ int hum;
 int temp;
 
 void setup() {
-  // put your setup code here, to run once:
-  Wire.begin();
+  // setup code to run once:
+  Wire.begin();            // join i2c bus
   irReceiver.enableIRIn();
   HT.begin();
-  Serial.begin(9600);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  hum= HT.readHumidity();
-  temp = HT.readTemperature();
+  // getting DHT11 sensor values
+  hum= HT.readHumidity();          // measures humidity value
+  temp = HT.readTemperature();      // measures temperature in degree Celcius
  
-if (irReceiver.decode(&result)){
- 
+ //  decodes received signsl
+if (irReceiver.decode(&result)){    
     irReceiver.resume();
     ir=(result.value);
   }
- 
-   if (ir==3772793023){
-   Wire.beginTransmission(4); 
-   Wire.write("Humidity=");
-   Wire.write(hum);
-   Wire.endTransmission();
+  
+   if (ir==3772793023){             //compares with reference value
+   Wire.beginTransmission(4);       //starts transmission
+   Wire.write("Humidity=");         //sends data
+   Wire.write(hum);       
+   Wire.endTransmission();          //end transmission
 
-   Wire.beginTransmission(4); 
-   Wire.write("Temperature=");
+   Wire.beginTransmission(4);        //restarts transmission
+   Wire.write("Temperature=");         //sends data
    Wire.write(temp);
-   Wire.endTransmission();
-   ir =0;
+   Wire.endTransmission();           //end transmission
+   ir =0;                   //resets value
    }
-  delay(1000);
+  delay(500);
     }
     
